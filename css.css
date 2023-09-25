@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    background: #333;
+    width: 100%;
+    height: 100vh;
+}
+
+.container{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+span{
+  font-size: 50px;
+  color: white;
+}
+
+.container-mostro{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+}
+
+.container-jogador{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+}
+
+.personagem{
+    font-size: 20px;
+    color: white;
+}
+
+h2{
+    color: white;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.borda{
+  text-align: center;
+  font-size: 30px;
+  color: white;
+  padding: 20px;
+  margin: 0 auto;
+  width: 80%;
+  border: 2px solid white;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.progress-bar{
+    border-radius: 10px;
+    border: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    margin-right: 20px;
+    height: 50px;
+    padding: 5px;
+    border: 2px solid white;
+    overflow: hidden;
+    margin-left: 50px;
+
+  }
+  
+
+  .botão{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .botão button{
+    width: 16%;
+    margin-left: 30px;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    padding: 10px;
+  }
+
+  .ataque{
+    background-color: red;
+  }
+
+  .ataque-especial{
+    background-color: orange;
+  }
+
+  .curar{
+    background-color: green;
+  }
+
+  .desistir{
+    background-color: gray;
+  }
+
+.verde{
+  background-color: green;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.vermelho{
+  background-color: red;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.amarelo{
+  background-color: yellow;
+  color: black;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.tentar-novamente{
+  background-color: red;
+  font-size: 14px;
+}
