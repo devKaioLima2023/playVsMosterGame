@@ -6,14 +6,12 @@ function iniciaGame() {
   let vidaDoMostro = 100;
   let vidaDoJogador = 100;
 
-
   criaBotão();
-
 
   const ataque = document.querySelector(".ataque");
   const cura = document.querySelector(".curar");
-  const desistir = document.querySelector('.desistir')
-  const ataqueEspecial = document.querySelector('.ataque-especial')
+  const desistir = document.querySelector('.desistir');
+  const ataqueEspecial = document.querySelector('.ataque-especial');
   const barraMonstro = document.querySelector("#mostro");
   const barraJogador = document.querySelector("#jogador");
   const vidaDoJogadorEmPorcentagem = document.querySelector(".vida-do-jogador");
@@ -21,187 +19,88 @@ function iniciaGame() {
   const resultado = document.querySelector(".resultado");
 
   ataque.addEventListener("click", () => {
-    const númeroAleatórioJogador = numeroAleatorio(0, 9);
-    const númeroAleratórioMonstro = numeroAleatorio(0, 9);
-    const danoMonstro = dj[númeroAleatórioJogador];
-    const danoJogador = dm[númeroAleratórioMonstro];
-    colocaNaTela(danoJogador, danoMonstro);
-    vidaDoMostro -= danoJogador;
-    vidaDoJogador -= danoMonstro;
-    barraMonstro.value = vidaDoMostro;
-    barraJogador.value = vidaDoJogador;
-    vidaDoMonstroEmPorcentagem.innerHTML = `${vidaDoMostro}%`;
-    vidaDoJogadorEmPorcentagem.innerHTML = `${vidaDoJogador}%`;
-
-    if (vidaDoJogador <= 0 && vidaDoMostro <= 0) {
-      ganhou("EMPATE!");
-      vidaDoJogadorEmPorcentagem.innerHTML = `${0}%`;
-      vidaDoMonstroEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-
-    } else if (vidaDoJogador <= 0) {
-      perdeu("O JOGADOR PERDEU!");
-      vidaDoJogadorEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-    } else if (vidaDoMostro <= 0) {
-      ganhou("O MOSTRO PERDEU!");
-      vidaDoMonstroEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-    }
+    realizarAtaque(dj, dm);
   });
 
   cura.addEventListener("click", () => {
+    realizarCura(dj, dm);
+  });
+
+  ataqueEspecial.addEventListener('click', () => {
+    realizarAtaqueEspecial(dj, dm);
+  });
+
+  desistir.addEventListener('click', () => {
+    exibirResultadoFinal();
+  });
+
+  function realizarAtaque(jogadorDanoArray, monstroDanoArray) {
+    if (!ataque.disabled) {
+      const númeroAleatórioJogador = numeroAleatorio(0, 9);
+      const númeroAleatórioMonstro = numeroAleatorio(0, 9);
+      const danoMonstro = jogadorDanoArray[númeroAleatórioJogador];
+      const danoJogador = monstroDanoArray[númeroAleatórioMonstro];
+
+      colocaNaTela(danoJogador, danoMonstro);
+      vidaDoMostro -= danoJogador;
+      vidaDoJogador -= danoMonstro;
+
+      atualizarBarraVida();
+    }
+  }
+
+  function realizarCura(jogadorDanoArray, monstroDanoArray) {
     if (!ataque.disabled) {
       const curaJogador = numeroAleatorio(0, 10);
-
       const vidaCurada = Math.min(vidaDoJogador + curaJogador, 100);
-
-      barraJogador.value = vidaCurada;
-      vidaDoJogador = vidaCurada;
-      vidaDoJogadorEmPorcentagem.innerHTML = `${vidaDoJogador}%`;
-
-      const númeroAleratórioMonstro = numeroAleatorio(0, 9);
-      const danoJogadorMonstro = dm[númeroAleratórioMonstro];
+      const númeroAleatórioMonstro = numeroAleatorio(0, 9);
+      const danoJogadorMonstro = monstroDanoArray[númeroAleatórioMonstro];
       const danoDoMostro = Math.max(vidaDoJogador - danoJogadorMonstro, 0);
-
-      if (danoDoMostro <= 0) {
-        perdeu("O JOGADOR PERDEU!");
-        cura.disabled = true;
-        ataque.disabled = true;
-      }
 
       barraJogador.value = danoDoMostro;
       vidaDoJogador = danoDoMostro;
-      vidaDoJogadorEmPorcentagem.innerHTML = `${vidaDoJogador}%`;
 
       curandoEAtaque(curaJogador, danoJogadorMonstro);
-
-      if (vidaDoJogador <= 0 && vidaDoMostro <= 0) {
-        ganhou("EMPATE!");
-        cura.disabled = true;
-        ataque.disabled = true;
-        botãoJogarNovamente()
-        const tentaNovamente = document.querySelector(".tentar-novamente")
-        tentaNovamente.addEventListener('click', () => {
-          jogaNovamente();
-        })
-      } else if (vidaDoJogador <= 0) {
-        perdeu("O JOGADOR PERDEU!");
-        cura.disabled = true;
-        ataque.disabled = true;
-        botãoJogarNovamente()
-        const tentaNovamente = document.querySelector(".tentar-novamente")
-        tentaNovamente.addEventListener('click', () => {
-          jogaNovamente();
-        })
-      } else if (vidaDoMostro <= 0) {
-        ganhou("O MOSTRO PERDEU!");
-        cura.disabled = true;
-        ataque.disabled = true;
-        botãoJogarNovamente()
-        const tentaNovamente = document.querySelector(".tentar-novamente")
-        tentaNovamente.addEventListener('click', () => {
-          jogaNovamente();
-        })
-      }
+      atualizarBarraVida();
     }
-  });
+  }
 
-  console.log(ataqueEspecial)
-
-  ataqueEspecial.addEventListener('click', ()=>{
+  function realizarAtaqueEspecial(jogadorDanoArray, monstroDanoArray) {
     const númeroAleatórioJogador = numeroAleatorio(0, 9);
-    const númeroAleratórioMonstro = numeroAleatorio(0, 9);
-    const danoMonstro = dj[númeroAleatórioJogador];
-    let danoJogador = dm[númeroAleratórioMonstro];
-    ataqueEspecialfuction(danoJogador += 20, danoMonstro)
+    const númeroAleatórioMonstro = numeroAleatorio(0, 9);
+    const danoMonstro = jogadorDanoArray[númeroAleatórioJogador];
+    let danoJogador = monstroDanoArray[númeroAleatórioMonstro];
+    ataqueEspecialFunction(danoJogador += 20, danoMonstro);
     vidaDoMostro -= danoJogador;
     vidaDoJogador -= danoMonstro;
-    barraMonstro.value = vidaDoMostro;
-    barraJogador.value = vidaDoJogador;
-    vidaDoMonstroEmPorcentagem.innerHTML = `${vidaDoMostro}%`;
-    vidaDoJogadorEmPorcentagem.innerHTML = `${vidaDoJogador}%`;
-    if (vidaDoJogador <= 0 && vidaDoMostro <= 0) {
-      ganhou("EMPATE!");
-      vidaDoJogadorEmPorcentagem.innerHTML = `${0}%`;
-      vidaDoMonstroEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
+    atualizarBarraVida();
+  }
 
-    } else if (vidaDoJogador <= 0) {
-      perdeu("O JOGADOR PERDEU!");
-      vidaDoJogadorEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-    } else if (vidaDoMostro <= 0) {
-      ganhou("O MOSTRO PERDEU!");
-      vidaDoMonstroEmPorcentagem.innerHTML = `${0}%`;
-      ataque.disabled = true;
-      botãoJogarNovamente()
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-    }
-  })
-
-  desistir.addEventListener('click', () => {
-    const criaButton = document.createElement('button')
+  function exibirResultadoFinal() {
+    containerBotão.innerHTML = "";
+    const criaButton = document.createElement('button');
     criaButton.classList.add("tentar-novamente");
-    const criap = document.createElement('p')
-    containerBotão.innerHTML = ""
+    criaButton.innerHTML = "JOGAR NOVAMENTE";
+    containerBotão.appendChild(criaButton);
+    let resultadoMsg = "";
+
     if (vidaDoJogador > vidaDoMostro) {
-      criap.innerHTML = "O JOGADOR VENCEU!"
-      criaButton.innerHTML = "JOGAR NOVAMENTE"
-      containerBotão.appendChild(criap)
-      containerBotão.appendChild(criaButton)
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
+      resultadoMsg = "O JOGADOR VENCEU!";
     } else if (vidaDoJogador < vidaDoMostro) {
-      criap.innerHTML = "O JOGADOR PERDEU!"
-      criaButton.innerHTML = "JOGAR NOVAMENTE"
-      containerBotão.appendChild(criap)
-      containerBotão.appendChild(criaButton)
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
-    } else if (vidaDoJogador === vidaDoMostro) {
-      criap.innerHTML = "EMPATE!"
-      criaButton.innerHTML = "JOGAR NOVAMENTE"
-      containerBotão.appendChild(criap)
-      containerBotão.appendChild(criaButton)
-      const tentaNovamente = document.querySelector(".tentar-novamente")
-      tentaNovamente.addEventListener('click', () => {
-        jogaNovamente();
-      })
+      resultadoMsg = "O JOGADOR PERDEU!";
+    } else {
+      resultadoMsg = "EMPATE!";
     }
-  })
+
+    const criap = document.createElement('p');
+    criap.innerHTML = resultadoMsg;
+    containerBotão.appendChild(criap);
+
+    const tentaNovamente = document.querySelector(".tentar-novamente");
+    tentaNovamente.addEventListener('click', () => {
+      jogaNovamente();
+    });
+  }
 
   function criaBotão() {
     const nomeButton = ["ATAQUE", "ATAQUE ESPECIAL", "CURA", "DESISTIR"];
@@ -230,19 +129,26 @@ function iniciaGame() {
     resultado.appendChild(criaP2);
   }
 
-  function ganhou(msg) {
-    const criaP = document.createElement("p");
-    criaP.classList.add("verde");
-    criaP.innerHTML = `${msg}`;
-    resultado.appendChild(criaP);
+  function atualizarBarraVida() {
+    barraMonstro.value = Math.max(vidaDoMostro, 0);
+    barraJogador.value = Math.max(vidaDoJogador, 0);
+    vidaDoMonstroEmPorcentagem.innerHTML = `${Math.max(vidaDoMostro, 0)}%`;
+    vidaDoJogadorEmPorcentagem.innerHTML = `${Math.max(vidaDoJogador, 0)}%`;
+  
+    if (vidaDoJogador <= 0 && vidaDoMostro <= 0) {
+      exibirResultadoFinal();
+      ataque.disabled = true;
+    } else if (vidaDoJogador <= 0) {
+      vidaDoJogador = 0;
+      exibirResultadoFinal();
+      ataque.disabled = true;
+    } else if (vidaDoMostro <= 0) {
+      vidaDoMostro = 0;
+      exibirResultadoFinal();
+      ataque.disabled = true;
+    }
   }
-
-  function perdeu(msg) {
-    const criaP = document.createElement("p");
-    criaP.classList.add("vermelho");
-    criaP.innerHTML = `${msg}`;
-    resultado.appendChild(criaP);
-  }
+  
 
   function curandoEAtaque(cura, ataque) {
     const criaP = document.createElement("p");
@@ -255,34 +161,26 @@ function iniciaGame() {
     resultado.appendChild(criaP2);
   }
 
-
   function jogaNovamente() {
-    containerBotão.innerHTML = ""
+    containerBotão.innerHTML = "";
     barraMonstro.value = 100;
     barraJogador.value = 100;
     vidaDoJogadorEmPorcentagem.innerHTML = `${100}%`;
     vidaDoMonstroEmPorcentagem.innerHTML = `${100}%`;
-    resultado.innerHTML = ""
+    resultado.innerHTML = "";
     iniciaGame();
   }
 
-  function botãoJogarNovamente(){
-    containerBotão.innerHTML = ""
-    const criaButton = document.createElement('button')
-    criaButton.classList.add("tentar-novamente");
-    criaButton.innerHTML = "JOGAR NOVAMENTE"
-    containerBotão.appendChild(criaButton)
-    }
-
-    function ataqueEspecialfuction(ataque, danoMostro) {
-      const criaP = document.createElement("p");
-      const criaP2 = document.createElement("p");
-      criaP.classList.add("verde");
-      criaP2.classList.add("vermelho");
-      criaP.innerHTML = `O JOGADOR DEU UM ATAQUE ESPECIAL DE ${ataque}!`;
-      criaP2.innerHTML = `O DANO DO MONSTRO FOI ${danoMostro}!`;
-      resultado.appendChild(criaP);
-      resultado.appendChild(criaP2);
-    }
+  function ataqueEspecialFunction(ataque, danoMostro) {
+    const criaP = document.createElement("p");
+    const criaP2 = document.createElement("p");
+    criaP.classList.add("verde");
+    criaP2.classList.add("vermelho");
+    criaP.innerHTML = `O JOGADOR DEU UM ATAQUE ESPECIAL DE ${ataque}!`;
+    criaP2.innerHTML = `O DANO DO MONSTRO FOI ${danoMostro}!`;
+    resultado.appendChild(criaP);
+    resultado.appendChild(criaP2);
+  }
 }
+
 iniciaGame();
